@@ -1,0 +1,9 @@
+version: 3
+
+server: https://app.fossa.com
+
+project:
+  id: github.com/akwaaba-xyz/urkel
+  name: github.com/akwaaba-xyz/urkel
+  link: papertree.earth
+  url: github.com/akwaaba-xyz/urkel
