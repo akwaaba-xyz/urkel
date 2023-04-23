@@ -10,8 +10,6 @@
 
 /// UsersetTree : A UsersetTree contains the result of an Expansion.
 
-
-
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
 pub struct UsersetTree {
     #[serde(rename = "root", skip_serializing_if = "Option::is_none")]
@@ -21,10 +19,6 @@ pub struct UsersetTree {
 impl UsersetTree {
     /// A UsersetTree contains the result of an Expansion.
     pub fn new() -> UsersetTree {
-        UsersetTree {
-            root: None,
-        }
+        UsersetTree { root: None }
     }
 }
-
-
