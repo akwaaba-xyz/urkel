@@ -9,7 +9,7 @@
  */
 
 use reqwest;
-
+use rocket::futures::{stream, StreamExt};
 use super::{configuration, Error};
 use crate::apis::ResponseContent;
 
@@ -22,6 +22,8 @@ pub enum OpenFGAError {
     Status500(crate::models::InternalErrorMessageResponse),
     UnknownValue(serde_json::Value),
 }
+
+const CONCURRENT_REQUESTS: usize = 2;
 
 /// The Check API queries to check if the user has a certain relationship with an object in a certain store. A `contextual_tuples` object may also be included in the body of the request. This object contains one field `tuple_keys`, which is an array of tuple keys. You may also provide an `authorization_model_id` in the body. This will be used to assert that the input `tuple_key` is valid for the model specified. If not specified, the assertion will be made against the latest authorization model ID. It is strongly recommended to specify authorization model id for better performance. The response will return whether the relationship exists in the field `allowed`.  ## Example In order to check if user `user:anne` of type `user` has a `reader` relationship with object `document:2021-budget` given the following contextual tuple ```json {   \"user\": \"user:anne\",   \"relation\": \"member\",   \"object\": \"time_slot:office_hours\" } ``` the Check API can be used with the following request body: ```json {   \"tuple_key\": {     \"user\": \"user:anne\",     \"relation\": \"reader\",     \"object\": \"document:2021-budget\"   },   \"contextual_tuples\": {     \"tuple_keys\": [       {         \"user\": \"user:anne\",         \"relation\": \"member\",         \"object\": \"time_slot:office_hours\"       }     ]   },   \"authorization_model_id\": \"01G50QVV17PECNVAHX1GG4Y5NC\" } ``` OpenFGA's response will include `{ \"allowed\": true }` if there is a relationship and `{ \"allowed\": false }` if there isn't.
 pub async fn check(
@@ -62,6 +64,71 @@ pub async fn check(
         };
         Err(Error::ResponseError(local_var_error))
     }
+}
+
+pub async fn batch_check(
+    configuration: &configuration::Configuration,
+    store_id: &str,
+    bodies: Vec<crate::models::CheckRequest>,
+) -> Vec<Result<crate::models::BatchCheckResponse, Error<OpenFGAError>>> {
+    let local_var_futures = stream::iter(bodies)
+        .map(|body| {
+            let local_var_client = &configuration.client;
+
+            let local_var_uri_str = format!(
+                "{}/stores/{store_id}/check",
+                configuration.base_path,
+                store_id = crate::apis::urlencode(store_id)
+            );
+            let mut local_var_req_builder =
+                local_var_client.request(reqwest::Method::POST, local_var_uri_str.as_str());
+
+            if let Some(ref local_var_user_agent) = configuration.user_agent {
+                local_var_req_builder =
+                    local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+            }
+            local_var_req_builder = local_var_req_builder.json(&body);
+
+            async move {
+                let local_var_req = local_var_req_builder.build()?;
+                let local_var_resp = local_var_client.execute(local_var_req).await?;
+
+                let local_var_status = local_var_resp.status();
+                let local_var_content = local_var_resp.text().await?;
+
+                if !local_var_status.is_client_error() && !local_var_status.is_server_error() {
+                    let local_var_output: Result<crate::models::CheckResponse, Error<OpenFGAError>> = serde_json::from_str(&local_var_content).map_err(Error::from);
+                    match local_var_output {
+                        Ok(check) => Ok(crate::models::BatchCheckResponse {
+                            allowed: check.allowed,
+                            request: Some(body),
+                            err: None
+                        }),
+                        Err(_) => Ok(crate::models::BatchCheckResponse {
+                            allowed: Some(false),
+                            request: Some(body),
+                            err: Some("Unknown error".to_string())
+                        })
+                    }
+                } else {
+                    let local_var_entity: Option<OpenFGAError> = serde_json::from_str(&local_var_content).ok();
+                    let local_var_error = ResponseContent {
+                        status: local_var_status,
+                        content: local_var_content,
+                        entity: local_var_entity,
+                    };
+                    Ok(crate::models::BatchCheckResponse {
+                        allowed: Some(false),
+                        request: Some(body),
+                        err: Some(local_var_error.content)
+                    })
+                }
+            }
+        })
+        .buffer_unordered(CONCURRENT_REQUESTS);
+
+    let results = local_var_futures.collect::<Vec<Result<crate::models::BatchCheckResponse, Error<OpenFGAError>>>>().await;
+    results
 }
 
 /// Create a unique OpenFGA store which will be used to store authorization models and relationship tuples.

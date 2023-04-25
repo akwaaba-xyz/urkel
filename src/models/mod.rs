@@ -8,6 +8,8 @@ pub mod check_request;
 pub use self::check_request::CheckRequest;
 pub mod check_response;
 pub use self::check_response::CheckResponse;
+pub mod batch_check_response;
+pub use self::batch_check_response::BatchCheckResponse;
 pub mod computed;
 pub use self::computed::Computed;
 pub mod contextual_tuple_keys;

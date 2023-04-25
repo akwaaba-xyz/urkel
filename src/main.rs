@@ -425,6 +425,28 @@ async fn check(
     }
 }
 
+#[post("/stores/<store_id>/batch-check", format = "json", data = "<body>")]
+async fn batch_check(
+    store_id: &str,
+    body: Json<Vec<urkel::models::CheckRequest>>,
+) -> Json<Vec<urkel::models::BatchCheckResponse>> {
+    let config = Configuration::new();
+    let results: Vec<Result<urkel::models::BatchCheckResponse, Error<urkel::apis::open_fga_api::OpenFGAError>>> = urkel::apis::open_fga_api::batch_check(&config, store_id, body.into_inner()).await;
+    let results = results
+        .into_iter()
+        .map(|result| match result {
+            Ok(result) => result,
+            Err(error) => {
+                urkel::models::BatchCheckResponse {
+                    allowed: Some(false),
+                    request: None,
+                    err: Some(error.to_string())
+                }
+            }
+        }).collect::<Vec<_>>();
+    Json(results)
+}
+
 /// The Expand API will return all users and usersets that have certain relationship with an object in a certain
 /// store.
 /// This is different from the /stores/{store_id}/read API in that both users and computed usersets are returned.
@@ -635,6 +657,7 @@ fn rocket() -> _ {
                 read,
                 write,
                 check,
+                batch_check,
                 expand,
                 list_objects,
                 list_assertions,
