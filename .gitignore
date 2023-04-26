@@ -4,3 +4,4 @@ Cargo.lock
 .openapi-generator-ignore
 .openapi-generator
 .github
+.DS_Store
