@@ -37,7 +37,7 @@ impl Configuration {
 impl Default for Configuration {
     fn default() -> Self {
         Configuration {
-            base_path: "http://0.0.0.1:8080".to_owned(),
+            base_path: "http://0.0.0.0:8080".to_owned(),
             user_agent: Some("urkel 0.0.1".to_owned()),
             client: reqwest::Client::new(),
             basic_auth: None,

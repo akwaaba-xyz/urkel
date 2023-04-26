@@ -66,6 +66,7 @@ pub async fn check(
     }
 }
 
+// Call the Check API with some number of concurrent requests
 pub async fn batch_check(
     configuration: &configuration::Configuration,
     store_id: &str,
@@ -129,6 +130,51 @@ pub async fn batch_check(
 
     let results = local_var_futures.collect::<Vec<Result<crate::models::BatchCheckResponse, Error<OpenFGAError>>>>().await;
     results
+}
+
+// Call the Check API and confirm whether at least n checks pass
+pub async fn check_n_of_m(
+    configuration: &configuration::Configuration,
+    store_id: &str,
+    body: crate::models::CheckNOfMRequest
+) -> Result<crate::models::CheckResponse, OpenFGAError> {
+    let n = body.num;
+    let checks = body.checks;
+    if checks.len() < 1 {
+        let validation_error = crate::models::ValidationErrorMessageResponse {
+            code: Some(crate::models::ErrorCode::ValidationError),
+            message: Some(
+                "Must provide at least one check.".to_string(),
+            ),
+        };
+        return Err(OpenFGAError::Status400(validation_error));
+    }
+    if n <= 0 || n > (checks.len() - 1) {
+        let validation_error = crate::models::ValidationErrorMessageResponse {
+            code: Some(crate::models::ErrorCode::ValidationError),
+            message: Some(
+                "Invalid n value provided.".to_string(),
+            ),
+        };
+        return Err(OpenFGAError::Status400(validation_error));
+    }
+    let results: Vec<Result<crate::models::BatchCheckResponse, Error<OpenFGAError>>> = batch_check(&configuration, store_id, checks).await;
+    let results = results
+        .into_iter()
+        .filter_map(|result| result.ok())
+        .filter(|result| result.allowed.unwrap_or(false))
+        .collect::<Vec<_>>();
+    if results.len() >= n {
+        Ok(crate::models::CheckResponse {
+            allowed: Some(true),
+            resolution: None
+        })
+    } else {
+        Ok(crate::models::CheckResponse {
+            allowed: Some(false),
+            resolution: None
+        })
+    }
 }
 
 /// Create a unique OpenFGA store which will be used to store authorization models and relationship tuples.

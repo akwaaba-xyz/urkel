@@ -5,6 +5,7 @@ use rocket::response::status;
 use rocket::serde::json::Json;
 use urkel::apis::configuration::Configuration;
 use urkel::apis::Error;
+use urkel::apis::open_fga_api::OpenFGAError;
 
 /// Endpoints related to Stores
 /// Returns a paginated list of OpenFGA stores.
@@ -14,7 +15,7 @@ async fn list_stores(
     continuation_token: Option<&str>,
 ) -> Result<
     status::Custom<Json<urkel::models::ListStoresResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::list_stores(&config, page_size, continuation_token).await {
@@ -30,7 +31,7 @@ async fn list_stores(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -46,7 +47,7 @@ async fn create_store(
     body: Json<urkel::models::CreateStoreRequest>,
 ) -> Result<
     status::Custom<Json<urkel::models::CreateStoreResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::create_store(&config, body.into_inner()).await {
@@ -62,7 +63,7 @@ async fn create_store(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -78,7 +79,7 @@ async fn get_store(
     store_id: &str,
 ) -> Result<
     status::Custom<Json<urkel::models::GetStoreResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::get_store(&config, store_id).await {
@@ -94,7 +95,7 @@ async fn get_store(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -108,7 +109,7 @@ async fn get_store(
 #[delete("/stores/<store_id>")]
 async fn delete_store(
     store_id: &str,
-) -> Result<status::Custom<()>, status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>> {
+) -> Result<status::Custom<()>, status::Custom<Json<OpenFGAError>>> {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::delete_store(&config, store_id).await {
         Ok(_) => Ok(status::Custom(Status::Ok, ())),
@@ -123,7 +124,7 @@ async fn delete_store(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -146,7 +147,7 @@ async fn list_models(
     continuation_token: Option<&str>,
 ) -> Result<
     status::Custom<Json<urkel::models::ReadAuthorizationModelsResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::read_authorization_models(
@@ -169,7 +170,7 @@ async fn list_models(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -192,7 +193,7 @@ async fn create_model(
     body: Json<urkel::models::WriteAuthorizationModelRequest>,
 ) -> Result<
     status::Custom<Json<urkel::models::WriteAuthorizationModelResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::write_authorization_model(&config, store_id, body.into_inner())
@@ -210,7 +211,7 @@ async fn create_model(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -228,7 +229,7 @@ async fn get_model(
     id: &str,
 ) -> Result<
     status::Custom<Json<urkel::models::ReadAuthorizationModelResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::read_authorization_model(&config, store_id, id).await {
@@ -244,7 +245,7 @@ async fn get_model(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -272,7 +273,7 @@ async fn list_changes(
     continuation_token: Option<&str>,
 ) -> Result<
     status::Custom<Json<urkel::models::ReadChangesResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::read_changes(
@@ -296,7 +297,7 @@ async fn list_changes(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -319,7 +320,7 @@ async fn read(
     body: Json<urkel::models::ReadRequest>,
 ) -> Result<
     status::Custom<Json<urkel::models::ReadResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::read(&config, store_id, body.into_inner()).await {
@@ -335,7 +336,7 @@ async fn read(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -359,7 +360,7 @@ async fn write(
     body: Json<urkel::models::WriteRequest>,
 ) -> Result<
     status::Custom<Json<serde_json::Value>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::write(&config, store_id, body.into_inner()).await {
@@ -375,7 +376,7 @@ async fn write(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -399,7 +400,7 @@ async fn check(
     body: Json<urkel::models::CheckRequest>,
 ) -> Result<
     status::Custom<Json<urkel::models::CheckResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::check(&config, store_id, body.into_inner()).await {
@@ -415,7 +416,7 @@ async fn check(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -431,7 +432,7 @@ async fn batch_check(
     body: Json<Vec<urkel::models::CheckRequest>>,
 ) -> Json<Vec<urkel::models::BatchCheckResponse>> {
     let config = Configuration::new();
-    let results: Vec<Result<urkel::models::BatchCheckResponse, Error<urkel::apis::open_fga_api::OpenFGAError>>> = urkel::apis::open_fga_api::batch_check(&config, store_id, body.into_inner()).await;
+    let results: Vec<Result<urkel::models::BatchCheckResponse, Error<OpenFGAError>>> = urkel::apis::open_fga_api::batch_check(&config, store_id, body.into_inner()).await;
     let results = results
         .into_iter()
         .map(|result| match result {
@@ -447,6 +448,39 @@ async fn batch_check(
     Json(results)
 }
 
+#[post("/stores/<store_id>/check-n-of-m", format = "json", data = "<body>")]
+async fn check_n_of_m(
+    store_id: &str,
+    body: Json<urkel::models::CheckNOfMRequest>,
+) -> Result<
+    status::Custom<Json<urkel::models::CheckResponse>>,
+    status::Custom<Json<OpenFGAError>>,
+> {
+    let config = Configuration::new();
+    match urkel::apis::open_fga_api::check_n_of_m(&config, store_id, body.into_inner()).await {
+        Ok(result) => Ok(status::Custom(Status::Ok, Json(result))),
+        Err(error) => match error {
+            OpenFGAError::Status400(validation_error) => {
+                let custom_status = Status::new(422);
+                let error_wrapper = OpenFGAError::Status400(validation_error);
+                Err(status::Custom(custom_status, Json(error_wrapper)))
+            }
+            _ => {
+                let internal_error = urkel::models::InternalErrorMessageResponse {
+                    code: Some(urkel::models::InternalErrorCode::InternalError),
+                    message: Some("Internal Error.".to_string()),
+                };
+                let error_wrapper =
+                    OpenFGAError::Status500(internal_error);
+                Err(status::Custom(
+                    Status::InternalServerError,
+                    Json(error_wrapper),
+                ))
+            }
+        },
+    }
+}
+
 /// The Expand API will return all users and usersets that have certain relationship with an object in a certain
 /// store.
 /// This is different from the /stores/{store_id}/read API in that both users and computed usersets are returned.
@@ -459,7 +493,7 @@ async fn expand(
     body: Json<urkel::models::ExpandRequest>,
 ) -> Result<
     status::Custom<Json<urkel::models::ExpandResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::expand(&config, store_id, body.into_inner()).await {
@@ -475,7 +509,7 @@ async fn expand(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -500,7 +534,7 @@ async fn list_objects(
     body: Json<urkel::models::ListObjectsRequest>,
 ) -> Result<
     status::Custom<Json<urkel::models::ListObjectsResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::list_objects(&config, store_id, body.into_inner()).await {
@@ -516,7 +550,7 @@ async fn list_objects(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -538,7 +572,7 @@ async fn list_assertions(
     authorization_model_id: &str,
 ) -> Result<
     status::Custom<Json<urkel::models::ReadAssertionsResponse>>,
-    status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>,
+    status::Custom<Json<OpenFGAError>>,
 > {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::read_assertions(&config, store_id, authorization_model_id)
@@ -556,7 +590,7 @@ async fn list_assertions(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -578,7 +612,7 @@ async fn create_assertions(
     store_id: &str,
     authorization_model_id: &str,
     body: Json<urkel::models::WriteAssertionsRequest>,
-) -> Result<status::Custom<()>, status::Custom<Json<urkel::apis::open_fga_api::OpenFGAError>>> {
+) -> Result<status::Custom<()>, status::Custom<Json<OpenFGAError>>> {
     let config = Configuration::new();
     match urkel::apis::open_fga_api::write_assertions(
         &config,
@@ -600,7 +634,7 @@ async fn create_assertions(
                     message: Some("Internal Error.".to_string()),
                 };
                 let error_wrapper =
-                    urkel::apis::open_fga_api::OpenFGAError::Status500(internal_error);
+                    OpenFGAError::Status500(internal_error);
                 Err(status::Custom(
                     Status::InternalServerError,
                     Json(error_wrapper),
@@ -658,6 +692,7 @@ fn rocket() -> _ {
                 write,
                 check,
                 batch_check,
+                check_n_of_m,
                 expand,
                 list_objects,
                 list_assertions,
