@@ -1,3 +1,6 @@
 /target/
 **/*.rs.bk
 Cargo.lock
+.openapi-generator-ignore
+.openapi-generator
+.github

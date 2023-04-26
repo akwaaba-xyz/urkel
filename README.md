@@ -1,5 +1,3 @@
-# Rust API client for urkel
+# Urkel: Rust API client for OpenFGA
 
-An opinionated permissions engine for expressing what users and objects can do based on contextual relationships.
-
-For more information, please visit [https://papertree.earth](https://papertree.earth)
+Urkel is a light wrapper around the OpenFGA API with additional support for non-traditional authorization schemes such as n-of-m, unanimous consensus, and more.

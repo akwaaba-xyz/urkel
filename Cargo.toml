@@ -2,7 +2,8 @@
 name = "urkel"
 version = "0.0.1"
 authors = ["support@papertree.earth"]
-description = "An opinionated permissions engine for expressing what users and objects can do based on contextual relationships."
+description = "
+Urkel is a light wrapper around the OpenFGA API with additional support for non-traditional authorization schemes such as n-of-m, unanimous consensus, and more."
 license = "Apache-2.0"
 edition = "2018"
 
