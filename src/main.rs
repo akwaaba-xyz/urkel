@@ -346,6 +346,38 @@ async fn read(
     }
 }
 
+#[post("/stores/<store_id>/read-until-end", format = "json", data = "<body>")]
+async fn read_until_end(
+    store_id: &str,
+    body: Json<urkel::models::ReadRequest>,
+) -> Result<
+    status::Custom<Json<urkel::models::ReadResponse>>,
+    status::Custom<Json<OpenFGAError>>,
+> {
+    let config = Configuration::new();
+    match urkel::apis::open_fga_api::read_until_end(&config, store_id, body.into_inner()).await {
+        Ok(result) => Ok(status::Custom(Status::Ok, Json(result))),
+        Err(error) => match error {
+            Error::ResponseError(e) => {
+                let custom_status = Status::new(e.status.as_u16());
+                Err(status::Custom(custom_status, Json(e.entity.unwrap())))
+            }
+            _ => {
+                let internal_error = urkel::models::InternalErrorMessageResponse {
+                    code: Some(urkel::models::InternalErrorCode::InternalError),
+                    message: Some("Internal Error.".to_string()),
+                };
+                let error_wrapper =
+                    OpenFGAError::Status500(internal_error);
+                Err(status::Custom(
+                    Status::InternalServerError,
+                    Json(error_wrapper),
+                ))
+            }
+        },
+    }
+}
+
 /// The Write API will update the tuples for a certain store. Tuples and type definitions allow OpenFGA to determine
 /// whether a relationship exists between an object and an user.
 /// In the body, writes adds new tuples while deletes removes existing tuples. The API is not idempotent:
@@ -689,6 +721,7 @@ fn rocket() -> _ {
                 get_model,
                 list_changes,
                 read,
+                read_until_end,
                 write,
                 check,
                 batch_check,

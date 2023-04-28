@@ -177,6 +177,14 @@ pub async fn check_n_of_m(
     }
 }
 
+// Call the Check API and confirm whether at least n checks pass
+//pub async fn check_horizontal(
+//    configuration: &configuration::Configuration,
+//    store_id: &str,
+//    body: crate::models::CheckHorizontalRequest
+//) -> Result<crate::models::CheckResponse, OpenFGAError> {}
+
+
 /// Create a unique OpenFGA store which will be used to store authorization models and relationship tuples.
 pub async fn create_store(
     configuration: &configuration::Configuration,
@@ -456,6 +464,42 @@ pub async fn read(
         };
         Err(Error::ResponseError(local_var_error))
     }
+}
+
+pub async fn read_until_end(
+    configuration: &configuration::Configuration,
+    store_id: &str,
+    body: crate::models::ReadRequest,
+) -> Result<crate::models::ReadResponse, Error<OpenFGAError>> {
+    let mut new_response = crate::models::ReadResponse::new();
+    let mut local_var_continuation_token = Some(body.continuation_token);
+    let mut tuples = Vec::new();
+
+    while let Some(ref_continuation_token) = local_var_continuation_token {
+        let loop_request = crate::models::ReadRequest {
+            continuation_token: ref_continuation_token,
+            tuple_key: body.tuple_key.clone(),
+            page_size: body.page_size.clone()
+        };
+        println!("{:?}", loop_request);
+        let local_var_read_response = read(&configuration, store_id, loop_request).await?;
+
+        if let Some(response_tuples) = local_var_read_response.tuples {
+            tuples.extend(response_tuples);
+        }
+        
+        if let Some(response_token) = local_var_read_response.continuation_token {
+            if response_token != "" {
+                local_var_continuation_token = Some(Some(response_token));
+            } else {
+                local_var_continuation_token = None;
+            }
+        } else {
+            local_var_continuation_token = None;
+        }
+    }
+    new_response.tuples = Some(tuples);
+    Ok(new_response)
 }
 
 /// The ReadAssertions API will return, for a given authorization model id, all the assertions stored for it. An assertion is an object that contains a tuple key, and the expectation of whether a call to the Check API of that tuple key will return true or false.
