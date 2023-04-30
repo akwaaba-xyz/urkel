@@ -35,6 +35,11 @@ pub async fn check(
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
+    }
+
     local_var_req_builder = local_var_req_builder.json(&body);
 
     let local_var_req = local_var_req_builder.build()?;
@@ -78,6 +83,11 @@ pub async fn batch_check(
                 local_var_req_builder = local_var_req_builder
                     .header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
             }
+            if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+                local_var_req_builder =
+                    local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
+            }
+
             local_var_req_builder = local_var_req_builder.json(&body);
 
             async move {
@@ -268,6 +278,10 @@ pub async fn create_store(
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
+    }
     local_var_req_builder = local_var_req_builder.json(&body);
 
     let local_var_req = local_var_req_builder.build()?;
@@ -307,6 +321,10 @@ pub async fn delete_store(
     if let Some(ref local_var_user_agent) = configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -348,6 +366,10 @@ pub async fn expand(
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
+    }
     local_var_req_builder = local_var_req_builder.json(&body);
 
     let local_var_req = local_var_req_builder.build()?;
@@ -388,6 +410,10 @@ pub async fn get_store(
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
+    }
 
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
@@ -427,6 +453,10 @@ pub async fn list_objects(
     if let Some(ref local_var_user_agent) = configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
     }
     local_var_req_builder = local_var_req_builder.json(&body);
 
@@ -473,6 +503,10 @@ pub async fn list_stores(
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
+    }
 
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
@@ -512,6 +546,10 @@ pub async fn read(
     if let Some(ref local_var_user_agent) = configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
     }
     local_var_req_builder = local_var_req_builder.json(&body);
 
@@ -591,6 +629,10 @@ pub async fn read_assertions(
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
+    }
 
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
@@ -631,6 +673,10 @@ pub async fn read_authorization_model(
     if let Some(ref local_var_user_agent) = configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -680,6 +726,10 @@ pub async fn read_authorization_models(
     if let Some(ref local_var_user_agent) = configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
     }
 
     let local_var_req = local_var_req_builder.build()?;
@@ -735,6 +785,10 @@ pub async fn read_changes(
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
+    }
 
     let local_var_req = local_var_req_builder.build()?;
     let local_var_resp = local_var_client.execute(local_var_req).await?;
@@ -774,6 +828,10 @@ pub async fn update_store(
     if let Some(ref local_var_user_agent) = configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
     }
     local_var_req_builder = local_var_req_builder.json(&body);
 
@@ -815,6 +873,10 @@ pub async fn write(
     if let Some(ref local_var_user_agent) = configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
     }
     local_var_req_builder = local_var_req_builder.json(&body);
 
@@ -859,6 +921,10 @@ pub async fn write_assertions(
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
     }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
+    }
     local_var_req_builder = local_var_req_builder.json(&body);
 
     let local_var_req = local_var_req_builder.build()?;
@@ -899,6 +965,10 @@ pub async fn write_authorization_model(
     if let Some(ref local_var_user_agent) = configuration.user_agent {
         local_var_req_builder =
             local_var_req_builder.header(reqwest::header::USER_AGENT, local_var_user_agent.clone());
+    }
+    if let Some(ref local_var_bearer_token) = configuration.bearer_access_token {
+        local_var_req_builder =
+            local_var_req_builder.header(reqwest::header::AUTHORIZATION, local_var_bearer_token.clone());
     }
     local_var_req_builder = local_var_req_builder.json(&body);
 
