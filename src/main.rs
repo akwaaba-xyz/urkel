@@ -1,11 +1,16 @@
 #[macro_use]
 extern crate rocket;
 use rocket::http::Status;
+use rocket::http::Header;
+use rocket::{Request, Response};
 use rocket::response::status;
 use rocket::serde::json::Json;
 use urkel::apis::configuration::Configuration;
 use urkel::apis::open_fga_api::OpenFGAError;
 use urkel::apis::Error;
+use rocket::fairing::{Fairing, Info, Kind};
+
+pub struct CORS;
 
 /// Endpoints related to Stores
 /// Returns a paginated list of OpenFGA stores.
@@ -714,6 +719,29 @@ fn default_catcher() -> Json<urkel::models::InternalErrorMessageResponse> {
     Json(internal_error)
 }
 
+/// Catches all OPTION requests in order to get the CORS related Fairing triggered.
+#[options("/<_..>")]
+fn all_options() {
+    /* Intentionally left empty */
+}
+
+#[rocket::async_trait]
+impl Fairing for CORS {
+    fn info(&self) -> Info {
+        Info {
+            name: "Add CORS headers to responses",
+            kind: Kind::Response
+        }
+    }
+
+    async fn on_response<'r>(&self, _request: &'r Request<'_>, response: &mut Response<'r>) {
+        response.set_header(Header::new("Access-Control-Allow-Origin", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Methods", "POST, GET, PATCH, OPTIONS, DELETE"));
+        response.set_header(Header::new("Access-Control-Allow-Headers", "*"));
+        response.set_header(Header::new("Access-Control-Allow-Credentials", "true"));
+    }
+}
+
 #[launch]
 fn rocket() -> _ {
     rocket::build()
@@ -738,7 +766,8 @@ fn rocket() -> _ {
                 expand,
                 list_objects,
                 list_assertions,
-                create_assertions
+                create_assertions,
+                all_options
             ],
         )
         .register(
@@ -750,4 +779,5 @@ fn rocket() -> _ {
                 not_found
             ],
         )
+        .attach(CORS)
 }
