@@ -5,3 +5,5 @@ Cargo.lock
 .openapi-generator
 .github
 .DS_Store
+.cargo
+NOTE.md
