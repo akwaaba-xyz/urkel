@@ -95,3 +95,5 @@ pub fn parse_deep_object(prefix: &str, value: &serde_json::Value) -> Vec<(String
 pub mod open_fga_api;
 
 pub mod configuration;
+
+pub mod fga_grpc;

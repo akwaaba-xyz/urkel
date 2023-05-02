@@ -105,6 +105,25 @@ async fn get_store(
     }
 }
 
+#[get("/store-alt")]
+async fn get_store_alt() -> Result<status::Custom<()>, status::Custom<Json<OpenFGAError>>> 
+{
+    match urkel::apis::fga_grpc::get_store().await {
+        Ok(_) => Ok(status::Custom(Status::Ok, ())),
+        Err(_) => {
+            let internal_error = urkel::models::InternalErrorMessageResponse {
+                code: Some(urkel::models::InternalErrorCode::InternalError),
+                message: Some("Internal Error.".to_string()),
+            };
+            let error_wrapper = OpenFGAError::Status500(internal_error);
+            Err(status::Custom(
+                Status::InternalServerError,
+                Json(error_wrapper),
+            ))
+        }
+    }
+}
+
 /// Delete an OpenFGA store. This does not delete the data associated with the store, like tuples or authorization models.
 #[delete("/stores/<store_id>")]
 async fn delete_store(
@@ -754,6 +773,7 @@ fn rocket() -> _ {
                 list_stores,
                 create_store,
                 get_store,
+                get_store_alt,
                 delete_store,
                 list_models,
                 create_model,
