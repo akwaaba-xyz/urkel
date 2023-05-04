@@ -1,18 +1,16 @@
-use std::env;
 use rocket::futures::{stream, StreamExt};
+use std::env;
 
 // gRPC
 pub mod openfga {
     tonic::include_proto!("openfga.v1");
 }
-use openfga::*;
 use open_fga_service_client::OpenFgaServiceClient;
+use openfga::*;
 
 use tonic::{
-    metadata::MetadataValue,
-    service::interceptor::InterceptedService,
-    transport::{Channel},
-    Request, Status,
+    metadata::MetadataValue, service::interceptor::InterceptedService, transport::Channel, Request,
+    Status,
 };
 
 #[derive(Clone, Debug, PartialEq, Default, Serialize, Deserialize)]
@@ -66,10 +64,7 @@ pub struct CheckHorizontalRequest {
 }
 
 impl CheckHorizontalRequest {
-    pub fn new(
-        read_from: ObjectRelation,
-        check_for: ObjectRelation,
-    ) -> CheckHorizontalRequest {
+    pub fn new(read_from: ObjectRelation, check_for: ObjectRelation) -> CheckHorizontalRequest {
         CheckHorizontalRequest {
             read_from: Box::new(read_from),
             check_for: Box::new(check_for),
@@ -78,13 +73,14 @@ impl CheckHorizontalRequest {
     }
 }
 
-
 const CONCURRENT_REQUESTS: usize = 2;
 
-pub async fn get_default_client(
-) -> Result<
-    OpenFgaServiceClient<InterceptedService<Channel, impl Fn(Request<()>) -> Result<Request<()>, Status>  >>,
-    Box<dyn std::error::Error>> {
+pub async fn get_default_client() -> Result<
+    OpenFgaServiceClient<
+        InterceptedService<Channel, impl Fn(Request<()>) -> Result<Request<()>, Status>>,
+    >,
+    Box<dyn std::error::Error>,
+> {
     let token = env::var("OPENFGA_BEARER_TOKEN").map_err(|_| {
         "Pass a valid preshared token via `OPENFGA_BEARER_TOKEN` environment variable.".to_string()
     })?;
@@ -94,9 +90,7 @@ pub async fn get_default_client(
         default_base_path = fga_addr.clone();
     }
 
-    let channel = Channel::from_shared(default_base_path)?
-        .connect()
-        .await?;
+    let channel = Channel::from_shared(default_base_path)?.connect().await?;
 
     let bearer_token = format!("Bearer {}", token);
     let header_value: MetadataValue<_> = bearer_token.parse()?;
@@ -110,7 +104,7 @@ pub async fn get_default_client(
 }
 
 pub async fn get_store(
-    store_id: &str
+    store_id: &str,
 ) -> Result<tonic::Response<GetStoreResponse>, Box<dyn std::error::Error>> {
     let mut client = get_default_client().await?;
 
@@ -124,13 +118,13 @@ pub async fn get_store(
 
 pub async fn list_stores(
     page_size: Option<i32>,
-    continuation_token: Option<&str>
+    continuation_token: Option<&str>,
 ) -> Result<tonic::Response<ListStoresResponse>, Box<dyn std::error::Error>> {
     let mut client = get_default_client().await?;
 
     let request = tonic::Request::new(ListStoresRequest {
         page_size: page_size,
-        continuation_token: continuation_token.unwrap_or("").into()
+        continuation_token: continuation_token.unwrap_or("").into(),
     });
 
     let response = client.list_stores(request).await?;
@@ -146,9 +140,7 @@ pub async fn create_store(
     Ok(response)
 }
 
-pub async fn delete_store(
-    store_id: &str,
-) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn delete_store(store_id: &str) -> Result<(), Box<dyn std::error::Error>> {
     let mut client = get_default_client().await?;
 
     let request = tonic::Request::new(DeleteStoreRequest {
@@ -169,7 +161,7 @@ pub async fn read_authorization_models(
     let request = tonic::Request::new(ReadAuthorizationModelsRequest {
         store_id: Some(store_id.to_string()),
         page_size: page_size,
-        continuation_token: continuation_token.unwrap_or("").into()
+        continuation_token: continuation_token.unwrap_or("").into(),
     });
 
     let response = client.read_authorization_models(request).await?;
@@ -185,7 +177,7 @@ pub async fn write_authorization_model(
     let request = tonic::Request::new(WriteAuthorizationModelRequest {
         store_id: Some(store_id.to_string()),
         type_definitions: body.type_definitions,
-        schema_version: body.schema_version
+        schema_version: body.schema_version,
     });
 
     let response = client.write_authorization_model(request).await?;
@@ -200,7 +192,7 @@ pub async fn read_authorization_model(
 
     let request = tonic::Request::new(ReadAuthorizationModelRequest {
         store_id: Some(store_id.to_string()),
-        id: id.into()
+        id: id.into(),
     });
 
     let response = client.read_authorization_model(request).await?;
@@ -219,7 +211,7 @@ pub async fn read_changes(
         store_id: Some(store_id.to_string()),
         r#type: r#type.unwrap_or("").into(),
         page_size: page_size,
-        continuation_token: continuation_token.unwrap_or("").into()
+        continuation_token: continuation_token.unwrap_or("").into(),
     });
 
     let response = client.read_changes(request).await?;
@@ -236,7 +228,7 @@ pub async fn read(
         store_id: Some(store_id.to_string()),
         tuple_key: body.tuple_key,
         page_size: body.page_size,
-        continuation_token: body.continuation_token.into()
+        continuation_token: body.continuation_token.into(),
     });
 
     let response = client.read(request).await?;
@@ -253,7 +245,7 @@ pub async fn write(
         store_id: Some(store_id.to_string()),
         writes: body.writes,
         deletes: body.deletes,
-        authorization_model_id: body.authorization_model_id
+        authorization_model_id: body.authorization_model_id,
     });
 
     let response = client.write(request).await?;
@@ -271,7 +263,7 @@ pub async fn check(
         tuple_key: body.tuple_key,
         contextual_tuples: body.contextual_tuples,
         authorization_model_id: body.authorization_model_id,
-        trace: body.trace
+        trace: body.trace,
     });
 
     let response = client.check(request).await?;
@@ -287,7 +279,7 @@ pub async fn expand(
     let request = tonic::Request::new(ExpandRequest {
         store_id: Some(store_id.to_string()),
         tuple_key: body.tuple_key,
-        authorization_model_id: body.authorization_model_id
+        authorization_model_id: body.authorization_model_id,
     });
 
     let response = client.expand(request).await?;
@@ -306,7 +298,7 @@ pub async fn list_objects(
         relation: body.relation,
         user: body.user,
         contextual_tuples: body.contextual_tuples,
-        authorization_model_id: body.authorization_model_id
+        authorization_model_id: body.authorization_model_id,
     });
 
     let response = client.list_objects(request).await?;
@@ -321,7 +313,7 @@ pub async fn read_assertions(
 
     let request = tonic::Request::new(ReadAssertionsRequest {
         store_id: store_id.to_string(),
-        authorization_model_id: authorization_model_id.into()
+        authorization_model_id: authorization_model_id.into(),
     });
 
     let response = client.read_assertions(request).await?;
@@ -338,8 +330,7 @@ pub async fn write_assertions(
     let request = tonic::Request::new(WriteAssertionsRequest {
         store_id: Some(store_id.to_string()),
         authorization_model_id: authorization_model_id.into(),
-        assertions: body.assertions
-
+        assertions: body.assertions,
     });
 
     client.write_assertions(request).await?;
@@ -348,7 +339,7 @@ pub async fn write_assertions(
 
 pub async fn read_until_end(
     store_id: &str,
-    body: ReadRequest
+    body: ReadRequest,
 ) -> Result<tonic::Response<ReadResponse>, Box<dyn std::error::Error>> {
     let mut client = get_default_client().await?;
 
@@ -360,13 +351,10 @@ pub async fn read_until_end(
             store_id: Some(store_id.to_string()),
             tuple_key: body.tuple_key.clone(),
             page_size: body.page_size.clone(),
-            continuation_token: ref_continuation_token
+            continuation_token: ref_continuation_token,
         });
 
-        let loop_response = client
-                                .read(loop_request)
-                                .await?.
-                                into_inner();
+        let loop_response = client.read(loop_request).await?.into_inner();
 
         tuples.extend(loop_response.tuples);
 
@@ -378,7 +366,7 @@ pub async fn read_until_end(
     }
     let new_response = tonic::Response::new(ReadResponse {
         tuples: tuples,
-        continuation_token: "".to_owned()
+        continuation_token: "".to_owned(),
     });
     Ok(new_response)
 }
@@ -388,39 +376,33 @@ pub async fn batch_check(
     bodies: Vec<CheckRequest>,
 ) -> Vec<Result<BatchCheckResponse, BatchCheckResponse>> {
     let local_var_futures = stream::iter(bodies)
-        .map(|body| {
-            async move {
-                let mut client = get_default_client().await.expect("building tonic client");
+        .map(|body| async move {
+            let mut client = get_default_client().await.expect("building tonic client");
 
-                let request = tonic::Request::new(CheckRequest {
-                    store_id: Some(store_id.to_string()),
-                    tuple_key: body.tuple_key.clone(),
-                    contextual_tuples: body.contextual_tuples.clone(),
-                    authorization_model_id: body.authorization_model_id.clone(),
-                    trace: body.trace.clone()
-                });
+            let request = tonic::Request::new(CheckRequest {
+                store_id: Some(store_id.to_string()),
+                tuple_key: body.tuple_key.clone(),
+                contextual_tuples: body.contextual_tuples.clone(),
+                authorization_model_id: body.authorization_model_id.clone(),
+                trace: body.trace.clone(),
+            });
 
-                let response = client.check(request).await;
-                match response {
-                    Ok(check) => {
-                        Ok(BatchCheckResponse {
-                            allowed: Some(check.into_inner().allowed),
-                            request: Some(body),
-                            err: None,
-                        })
-                    },
-                    Err(error) => Ok(
-                        BatchCheckResponse {
-                            allowed: Some(false),
-                            request: Some(body),
-                            err: Some(error.to_string()),
-                        }
-                    ),
-                }
+            let response = client.check(request).await;
+            match response {
+                Ok(check) => Ok(BatchCheckResponse {
+                    allowed: Some(check.into_inner().allowed),
+                    request: Some(body),
+                    err: None,
+                }),
+                Err(error) => Ok(BatchCheckResponse {
+                    allowed: Some(false),
+                    request: Some(body),
+                    err: Some(error.to_string()),
+                }),
             }
         })
         .buffer_unordered(CONCURRENT_REQUESTS);
-    
+
     let results = local_var_futures
         .collect::<Vec<Result<BatchCheckResponse, BatchCheckResponse>>>()
         .await;
@@ -479,11 +461,10 @@ pub async fn check_horizontal(
             user: None,
         }),
         page_size: Some(100),
-        continuation_token: "".to_owned()
+        continuation_token: "".to_owned(),
     };
 
-    let local_var_response: ReadResponse =
-        read_until_end(store_id, read_from).await?.into_inner();
+    let local_var_response: ReadResponse = read_until_end(store_id, read_from).await?.into_inner();
     let mut check_requests = Vec::new();
     let tuples = local_var_response.tuples;
 
