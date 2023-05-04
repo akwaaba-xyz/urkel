@@ -862,7 +862,7 @@ message CheckResponse {
   bool allowed = 1 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {example: "true"}];
 
   // For internal use only.
-  string resolution = 2;
+  optional string resolution = 2;
 }
 
 message ExpandRequest {

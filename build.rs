@@ -61,6 +61,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             ".openfga.v1.CheckRequest.store_id",
             "#[serde(skip_serializing_if = \"Option::is_none\")]"
         )
+        .field_attribute(
+            ".openfga.v1.CheckResponse.resolution",
+            "#[serde(skip_serializing_if = \"Option::is_none\")]"
+        )
         .extern_path(
             ".google.protobuf.Any",
             "::prost_wkt_types::Any"

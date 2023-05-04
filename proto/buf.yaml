@@ -1,7 +1,0 @@
-version: v1
-name: buf.build/rudyfraser/openfga
-lint:
- use:
-   - DEFAULT
-deps:
-  - buf.build/openfga/api # The latest commit.
