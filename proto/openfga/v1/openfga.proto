@@ -26,7 +26,7 @@ message Object {
 }
 
 message TupleKey {
-  string object = 1 [
+  optional string object = 1 [
     (validate.rules).string = {
       pattern: "^[^\\s]{2,256}$",
       ignore_empty: true
@@ -36,7 +36,7 @@ message TupleKey {
       example: "\"document:2021-budget\""
     }
   ];
-  string relation = 2 [
+  optional string relation = 2 [
     (validate.rules).string = {
       pattern: "^[^:#@\\s]{1,50}$",
       ignore_empty: true
@@ -46,7 +46,7 @@ message TupleKey {
       example: "\"reader\""
     }
   ];
-  string user = 3 [
+  optional string user = 3 [
     (validate.rules).string = {max_bytes: 512},
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
       max_length: 512,

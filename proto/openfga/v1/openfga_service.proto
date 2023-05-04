@@ -658,13 +658,13 @@ service OpenFGAService {
 }
 
 message ListObjectsRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {example: "\"01YCP46JKYM8FJCQ37NMBYHE5X\""}
   ];
 
-  string authorization_model_id = 2 [
+  optional string authorization_model_id = 2 [
     json_name = "authorization_model_id",
     (validate.rules).string = {
       pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$",
@@ -710,7 +710,7 @@ message ListObjectsResponse {
 }
 
 message StreamedListObjectsRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
     (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {example: "\"01YCP46JKYM8FJCQ37NMBYHE5X\""}
@@ -767,7 +767,7 @@ message StreamedListObjectsResponse {
 // because of https://github.com/ulid/spec#encoding
 
 message ReadRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
@@ -803,7 +803,7 @@ message ReadResponse {
 }
 
 message WriteRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
@@ -814,7 +814,7 @@ message WriteRequest {
 
   openfga.v1.TupleKeys deletes = 3;
 
-  string authorization_model_id = 4 [
+  optional string authorization_model_id = 4 [
     json_name = "authorization_model_id",
     (validate.rules).string = {
       pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$",
@@ -827,7 +827,7 @@ message WriteRequest {
 message WriteResponse {}
 
 message CheckRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
@@ -842,7 +842,7 @@ message CheckRequest {
 
   openfga.v1.ContextualTupleKeys contextual_tuples = 3 [json_name = "contextual_tuples"];
 
-  string authorization_model_id = 4 [
+  optional string authorization_model_id = 4 [
     json_name = "authorization_model_id",
     (validate.rules).string = {
       pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$",
@@ -852,7 +852,7 @@ message CheckRequest {
   ];
 
   // Defaults to false. Making it true has performance implications.
-  bool trace = 5 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
+  optional bool trace = 5 [(grpc.gateway.protoc_gen_openapiv2.options.openapiv2_field) = {
     read_only: true,
     example: "false"
   }];
@@ -866,7 +866,7 @@ message CheckResponse {
 }
 
 message ExpandRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
@@ -894,7 +894,7 @@ message ExpandResponse {
 }
 
 message ReadAuthorizationModelRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
@@ -909,7 +909,7 @@ message ReadAuthorizationModelResponse {
 }
 
 message WriteAuthorizationModelRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
@@ -944,7 +944,7 @@ message WriteAuthorizationModelResponse {
 }
 
 message ReadAuthorizationModelsRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
@@ -978,7 +978,7 @@ message ReadAuthorizationModelsResponse {
 }
 
 message WriteAssertionsRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},
@@ -1033,7 +1033,7 @@ message ReadAssertionsResponse {
 }
 
 message ReadChangesRequest {
-  string store_id = 1 [
+  optional string store_id = 1 [
     json_name = "store_id",
     (google.api.field_behavior) = REQUIRED,
     (validate.rules).string = {pattern: "^[ABCDEFGHJKMNPQRSTVWXYZ0-9]{26}$"},

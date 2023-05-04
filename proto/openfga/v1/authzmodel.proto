@@ -101,15 +101,15 @@ message Difference {
   ];
 }
 
+// Urkel Note: Serde had a hard time deserializing oneOf type
+// camelCase -> snake_case conversion needed here
 message Userset {
-  oneof userset {
     DirectUserset this = 1;
     ObjectRelation computed_userset = 2;
     TupleToUserset tuple_to_userset = 3;
     Usersets union = 4;
     Usersets intersection = 5;
     Difference difference = 6;
-  }
 }
 
 // A DirectUserset is a sentinel message for referencing
@@ -121,6 +121,7 @@ message ObjectRelation {
   string relation = 2 [(validate.rules).string = {max_bytes: 50}];
 }
 
+// camelCase -> snake_case conversion needed here
 message TupleToUserset {
   // The target object/relation
   ObjectRelation tupleset = 1;
