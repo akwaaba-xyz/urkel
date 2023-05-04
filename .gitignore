@@ -7,3 +7,4 @@ Cargo.lock
 .DS_Store
 .cargo
 NOTE.md
+.graveyard/
