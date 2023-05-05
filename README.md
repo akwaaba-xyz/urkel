@@ -1,13 +1,13 @@
-# <h1 align="center"> Urkel 👨🏾‍🔬🦀 </h1>
+# <h1> Urkel 👨🏾‍🔬 🦀 </h1>
 
-**A gRPC client and HTTP wrapping server for Open FGA, built in Rust.**
+<p><strong>A gRPC client and HTTP wrapping server for Open FGA, built in Rust.</strong></p>
+
 [![dependency status](https://deps.rs/repo/github/akwaaba-xyz/urkel/status.svg?style=flat-square)](https://deps.rs/repo/github/akwaaba-xyz/urkel) [![License](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](https://opensource.org/licenses/Apache-2.0)
 
 | “Security is about how you configure power, who has access to what? That is political.” - Dug Song, Co-Founder of Duo |
-|  |
+| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Urkel is an opinionated permissions engine for expressing what users and objects can do based on contextual relationships. It presumes that relationships between things and people is the most expressive and natural way to describe how power flows within a system. |
 | Leveraging fine-grained authorization, Urkel seeks to address the access control needs of typically underserved, non-hierarchical organizations such as DAOs, non-profits, coops, mutual aid groups and more. |
-| ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 
 
 ## Features
@@ -32,7 +32,7 @@ If you use this project in a production environment, it is your responsibility t
 
 ## Credits
 
-This application would not have been possible without the great work done in:
+This project would not have been possible without the great work done in:
 
 -   [`openfga`](https://github.com/openfga/openfga/)
 -   [`modpol`](https://gitlab.com/medlabboulder/modpol/)
