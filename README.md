@@ -12,7 +12,7 @@
 
 ## Features
 
--   [x] OpenFGA gRCP client
+-   [x] OpenFGA gRPC client
 -   [x] HTTP server for serializing and deserializing JSON
 -   [x] Check permissions in bulk
 -   [x] n-of-m authorization schemes
