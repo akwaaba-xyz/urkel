@@ -2,7 +2,7 @@
 name = "urkel"
 version = "0.0.1"
 authors = ["support@papertree.earth"]
-description = "Urkel is a light wrapper around the OpenFGA API with additional support for non-traditional authorization schemes such as n-of-m, unanimous consensus, and more."
+description = "A gRPC client and HTTP wrapping server for Open FGA, built in Rust."
 license = "Apache-2.0"
 edition = "2021"
 
