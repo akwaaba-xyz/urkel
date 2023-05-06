@@ -12,7 +12,7 @@
 
 ## Features
 
--   [x] OpenFGA gRCP client
+-   [x] OpenFGA gRPC client
 -   [x] HTTP server for serializing and deserializing JSON
 -   [x] Check permissions in bulk
 -   [x] n-of-m authorization schemes
@@ -25,7 +25,7 @@
 
 ## User Warning
 
-This project comes as is. We provide no guarantee of stability or support, as the crates closely follow the needs of the [Papertree]([https://](https://papertree.earth/)) project.
+This project comes as is. We provide no guarantee of stability or support, as the crates closely follow the needs of the [`Papertree`](https://papertree.earth/) project.
 
 If you use this project in a production environment, it is your responsibility to perform a security audit to ensure that the software meets your requirements.
 
